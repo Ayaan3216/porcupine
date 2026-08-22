@@ -673,7 +673,9 @@ function stopKeepAliveAudio() {
 ══════════════════════════════════════════════════════════════════════ */
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').catch(console.warn);
+  // Works on both localhost (/) and GitHub Pages (/porcupine/)
+  const swPath = window.location.pathname.replace(/\/[^/]*$/, '/') + 'sw.js';
+  navigator.serviceWorker.register(swPath).catch(e => console.warn('[sw] register failed:', e.message));
 }
 
 async function notifyCompletion(title, body) {
