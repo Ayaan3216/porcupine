@@ -260,7 +260,7 @@
     // Load Socket.IO from the signaling server (works for both localhost and Render)
     const _serverUrl = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
       ? location.origin
-      : 'https://porcupine-server.onrender.com';
+      : 'https://porcupine-server-31gi.onrender.com';
     const _s = document.createElement('script');
     _s.src = _serverUrl + '/socket.io/socket.io.js';
     _s.onload = () => { const _a = document.createElement('script'); _a.src = 'js/app.js'; document.body.appendChild(_a); };

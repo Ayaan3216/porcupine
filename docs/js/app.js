@@ -9,7 +9,7 @@
 // In development (localhost), connect to local server.
 // In production (GitHub Pages), connect to your deployed Render server.
 // ⬇️  UPDATE THIS URL after deploying to Render:
-const RENDER_SERVER_URL = 'https://porcupine-server.onrender.com';
+const RENDER_SERVER_URL = 'https://porcupine-server-31gi.onrender.com';
 
 const SIGNAL_SERVER = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
   ? window.location.origin   // local dev — same machine

@@ -8,8 +8,8 @@ const app = express();
 const server = http.createServer(app);
 const ALLOWED_ORIGINS = [
   'http://localhost:3000',
-  /\.github\.io$/,       // any GitHub Pages domain
-  /\.trycloudflare\.com$/ // Cloudflare tunnels
+  'https://ayaan3216.github.io',    // GitHub Pages
+  /\.trycloudflare\.com$/           // Cloudflare tunnels
 ];
 
 const io = new Server(server, {

@@ -4,7 +4,7 @@
 > Send files device-to-device using a 6-character code. No accounts. No uploads. Files travel directly between browsers via WebRTC.
 
 [![Live App](https://img.shields.io/badge/Live%20App-GitHub%20Pages-F5A623?style=for-the-badge&logo=github)](https://ayaan3216.github.io/porcupine)
-[![Server](https://img.shields.io/badge/Server-Render-46E3B7?style=for-the-badge&logo=render)](https://porcupine-server.onrender.com/health)
+[![Server](https://img.shields.io/badge/Server-Render-46E3B7?style=for-the-badge&logo=render)](https://porcupine-server-31gi.onrender.com/health)
 
 ---
 
