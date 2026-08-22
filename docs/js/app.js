@@ -48,6 +48,8 @@ let useStreamAPI = false;
 let transferStartTime = null;
 let lastBytes = 0;
 let lastSpeedTime = null;
+let pendingOffer = null;      // Buffers offer that arrives before PC is ready
+let pendingCandidates = [];   // Buffers ICE candidates before remote desc is set
 
 /* ── Socket.IO initialization ─────────────────────────────────────────── */
 function getSocket() {
@@ -487,15 +489,37 @@ async function setupReceiverConnection() {
   };
 
   peerConnection.onconnectionstatechange = () => {
+    console.log('[pc] receiver state:', peerConnection.connectionState);
     if (peerConnection.connectionState === 'failed') {
       showTransferError('recv', 'Connection failed. Ask sender for a new code.');
     }
   };
+
+  // Process any offer that arrived while we were waiting for file picker
+  if (pendingOffer) {
+    console.log('[webrtc] processing buffered offer');
+    await processOffer(pendingOffer);
+    pendingOffer = null;
+  }
 }
 
+// Buffer offer if peer connection isn't ready yet (race condition fix)
 async function onOffer(offer) {
-  if (!peerConnection) return;
+  if (!peerConnection) {
+    console.log('[webrtc] offer arrived before PC ready — buffering');
+    pendingOffer = offer;
+    return;
+  }
+  await processOffer(offer);
+}
+
+async function processOffer(offer) {
   await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+  // Flush any ICE candidates that arrived before remote description
+  for (const c of pendingCandidates) {
+    try { await peerConnection.addIceCandidate(new RTCIceCandidate(c)); } catch(_) {}
+  }
+  pendingCandidates = [];
   const answer = await peerConnection.createAnswer();
   await peerConnection.setLocalDescription(answer);
   socket.emit('answer', { answer });
@@ -507,7 +531,12 @@ async function onAnswer(answer) {
 }
 
 async function onIceCandidate(candidate) {
-  if (!peerConnection || !candidate) return;
+  if (!candidate) return;
+  // If remote description not set yet, queue the candidate
+  if (!peerConnection || !peerConnection.remoteDescription) {
+    pendingCandidates.push(candidate);
+    return;
+  }
   try {
     await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
   } catch (e) {
@@ -724,6 +753,8 @@ function cleanup() {
   writableStream = null;
   useStreamAPI = false;
   transferStartTime = null;
+  pendingOffer = null;
+  pendingCandidates = [];
 }
 
 /* ══════════════════════════════════════════════════════════════════════
