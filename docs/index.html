@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Porcupine — Direct File Transfer</title>
+  <meta name="description" content="Send files directly between devices. No cloud. No signup. Just a code." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- Decorative quill spines background -->
+  <div class="bg-decoration" aria-hidden="true">
+    <div class="quill-pattern"></div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <button class="logo" onclick="goHome()" aria-label="Go to home">
+      <svg class="logo-icon" width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="16" cy="16" r="5" fill="#F5A623"/>
+        <line x1="16" y1="1" x2="16" y2="9" stroke="#F5A623" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="16" y1="23" x2="16" y2="31" stroke="#F5A623" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="1" y1="16" x2="9" y2="16" stroke="#F5A623" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="23" y1="16" x2="31" y2="16" stroke="#F5A623" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="5.5" y1="5.5" x2="11.5" y2="11.5" stroke="#F5A623" stroke-width="2" stroke-linecap="round"/>
+        <line x1="20.5" y1="20.5" x2="26.5" y2="26.5" stroke="#F5A623" stroke-width="2" stroke-linecap="round"/>
+        <line x1="26.5" y1="5.5" x2="20.5" y2="11.5" stroke="#F5A623" stroke-width="2" stroke-linecap="round"/>
+        <line x1="11.5" y1="20.5" x2="5.5" y2="26.5" stroke="#F5A623" stroke-width="2" stroke-linecap="round"/>
+        <line x1="16" y1="1" x2="19.5" y2="6" stroke="#F5A623" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+        <line x1="16" y1="1" x2="12.5" y2="6" stroke="#F5A623" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+        <line x1="31" y1="16" x2="26" y2="12.5" stroke="#F5A623" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+        <line x1="31" y1="16" x2="26" y2="19.5" stroke="#F5A623" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+      </svg>
+      <span class="logo-text">Porcupine</span>
+    </button>
+    <span class="header-tagline">Direct. Private. No cloud.</span>
+  </header>
+
+  <main class="app-main">
+
+    <!-- ═══════════════ HOME VIEW ═══════════════ -->
+    <section id="view-home" class="view active" aria-label="Home">
+      <div class="hero">
+        <h1 class="hero-title">Share files directly.<br><em class="accent">Just a code.</em></h1>
+        <p class="hero-sub">Files travel device-to-device. Nothing is stored anywhere. Both parties must be online.</p>
+      </div>
+      <div class="home-cards">
+        <button class="home-card send-card" id="btn-go-send" onclick="goToSend()">
+          <div class="hcard-icon">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <div class="hcard-content">
+            <h2>Send a File</h2>
+            <p>Get a unique code to share</p>
+          </div>
+          <div class="hcard-arrow">→</div>
+        </button>
+
+        <div class="cards-or"><span>or</span></div>
+
+        <button class="home-card receive-card" id="btn-go-receive" onclick="goToReceive()">
+          <div class="hcard-icon">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+          </div>
+          <div class="hcard-content">
+            <h2>Receive a File</h2>
+            <p>Enter a code to download</p>
+          </div>
+          <div class="hcard-arrow">→</div>
+        </button>
+      </div>
+      <p class="home-footer">No accounts. No uploads. Files expire when you close the tab.</p>
+    </section>
+
+    <!-- ═══════════════ SEND VIEW ═══════════════ -->
+    <section id="view-send" class="view" aria-label="Send file">
+      <button class="back-btn" id="btn-back-send" onclick="goHome()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+        Back
+      </button>
+
+      <!-- SEND STEP 1: File pick -->
+      <div id="send-s1" class="send-step active">
+        <h2 class="step-heading">Choose a file to send</h2>
+        <div class="drop-zone" id="drop-zone"
+          role="button" tabindex="0" aria-label="Drop file here or click to browse"
+          onclick="document.getElementById('file-input').click()"
+          onkeydown="if(event.key==='Enter')this.click()"
+          ondrop="handleDrop(event)"
+          ondragover="handleDragOver(event)"
+          ondragleave="handleDragLeave(event)">
+          <div class="dz-icon" aria-hidden="true">
+            <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="12" y1="18" x2="12" y2="12"/>
+              <line x1="9" y1="15" x2="12" y2="12"/>
+              <line x1="15" y1="15" x2="12" y2="12"/>
+            </svg>
+          </div>
+          <p class="dz-title">Drop your file here</p>
+          <p class="dz-sub">or click to browse — any file type, any size</p>
+        </div>
+        <input type="file" id="file-input" style="display:none" aria-hidden="true" onchange="handleFileSelect(event)" />
+      </div>
+
+      <!-- SEND STEP 2: Code display -->
+      <div id="send-s2" class="send-step">
+        <div class="file-pill" id="s2-file-pill">
+          <span class="file-pill-icon" id="s2-file-emoji">📄</span>
+          <div class="file-pill-info">
+            <span class="file-pill-name" id="s2-file-name">—</span>
+            <span class="file-pill-size" id="s2-file-size">—</span>
+          </div>
+        </div>
+        <h2 class="step-heading">Share this code</h2>
+        <div class="code-box" id="code-box">
+          <span class="code-value" id="code-value" aria-live="polite">···-···</span>
+        </div>
+        <div class="code-actions">
+          <button class="btn-copy" id="btn-copy" onclick="copyCode()" aria-label="Copy code to clipboard">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copy Code
+          </button>
+        </div>
+        <div class="waiting-row" aria-live="polite">
+          <span class="pulse-dot" aria-hidden="true"></span>
+          <span>Waiting for receiver…</span>
+          <span class="code-timer" id="code-timer" aria-label="Code expires in">10:00</span>
+        </div>
+        <p class="code-note">Tell the other person to open <strong>this site</strong>, click <em>Receive</em>, and enter this code. Code is single-use and expires in 10 minutes.</p>
+      </div>
+
+      <!-- SEND STEP 3: Transfer progress -->
+      <div id="send-s3" class="send-step">
+        <div class="file-pill" id="s3-file-pill">
+          <span class="file-pill-icon" id="s3-file-emoji">📄</span>
+          <div class="file-pill-info">
+            <span class="file-pill-name" id="s3-file-name">—</span>
+            <span class="file-pill-size" id="s3-file-size">—</span>
+          </div>
+        </div>
+        <div class="transfer-card" id="send-transfer-card">
+          <div class="transfer-header">
+            <span class="transfer-label" id="send-status-label">Sending…</span>
+            <span class="transfer-pct" id="send-pct">0%</span>
+          </div>
+          <div class="progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="send-progress-track">
+            <div class="progress-fill" id="send-progress-fill"></div>
+            <div class="progress-glow" id="send-progress-glow"></div>
+          </div>
+          <div class="transfer-meta">
+            <span id="send-transferred">0 B</span>
+            <span id="send-speed">— MB/s</span>
+            <span id="send-eta">—</span>
+          </div>
+        </div>
+        <div class="bg-notice" aria-live="polite">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Transfer runs in the background — you can switch apps
+        </div>
+      </div>
+
+      <!-- SEND STEP 4: Done / Error -->
+      <div id="send-s4" class="send-step">
+        <div class="result-card" id="send-result-card">
+          <div class="result-icon" id="send-result-icon">✓</div>
+          <h2 class="result-title" id="send-result-title">Transfer complete!</h2>
+          <p class="result-sub" id="send-result-sub">The file was delivered successfully.</p>
+          <button class="btn-primary" onclick="goHome()">Send another file</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ RECEIVE VIEW ═══════════════ -->
+    <section id="view-receive" class="view" aria-label="Receive file">
+      <button class="back-btn" id="btn-back-receive" onclick="goHome()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+        Back
+      </button>
+
+      <!-- RECEIVE STEP 1: Code entry -->
+      <div id="recv-s1" class="recv-step active">
+        <h2 class="step-heading">Enter the transfer code</h2>
+        <p class="step-sub">Ask the sender for their 6-character code</p>
+        <div class="otp-row" id="otp-row" role="group" aria-label="Transfer code input">
+          <input class="otp-box" id="otp-0" maxlength="1" inputmode="text" autocomplete="off" aria-label="Code character 1" oninput="otpInput(this,0)" onkeydown="otpKeydown(this,0)" onpaste="otpPaste(event)" />
+          <input class="otp-box" id="otp-1" maxlength="1" inputmode="text" autocomplete="off" aria-label="Code character 2" oninput="otpInput(this,1)" onkeydown="otpKeydown(this,1)" />
+          <input class="otp-box" id="otp-2" maxlength="1" inputmode="text" autocomplete="off" aria-label="Code character 3" oninput="otpInput(this,2)" onkeydown="otpKeydown(this,2)" />
+          <span class="otp-dash" aria-hidden="true">-</span>
+          <input class="otp-box" id="otp-3" maxlength="1" inputmode="text" autocomplete="off" aria-label="Code character 4" oninput="otpInput(this,3)" onkeydown="otpKeydown(this,3)" />
+          <input class="otp-box" id="otp-4" maxlength="1" inputmode="text" autocomplete="off" aria-label="Code character 5" oninput="otpInput(this,4)" onkeydown="otpKeydown(this,4)" />
+          <input class="otp-box" id="otp-5" maxlength="1" inputmode="text" autocomplete="off" aria-label="Code character 6" oninput="otpInput(this,5)" onkeydown="otpKeydown(this,5)" />
+        </div>
+        <p class="otp-error" id="otp-error" aria-live="assertive"></p>
+        <button class="btn-primary" id="btn-start-download" onclick="startReceive()" disabled>
+          Start Download
+        </button>
+      </div>
+
+      <!-- RECEIVE STEP 2: Transfer progress -->
+      <div id="recv-s2" class="recv-step">
+        <div class="file-pill" id="r2-file-pill">
+          <span class="file-pill-icon" id="r2-file-emoji">📄</span>
+          <div class="file-pill-info">
+            <span class="file-pill-name" id="r2-file-name">—</span>
+            <span class="file-pill-size" id="r2-file-size">—</span>
+          </div>
+        </div>
+        <div class="transfer-card">
+          <div class="transfer-header">
+            <span class="transfer-label" id="recv-status-label">Connecting…</span>
+            <span class="transfer-pct" id="recv-pct">0%</span>
+          </div>
+          <div class="progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="recv-progress-track">
+            <div class="progress-fill" id="recv-progress-fill"></div>
+            <div class="progress-glow" id="recv-progress-glow"></div>
+          </div>
+          <div class="transfer-meta">
+            <span id="recv-transferred">0 B</span>
+            <span id="recv-speed">— MB/s</span>
+            <span id="recv-eta">—</span>
+          </div>
+        </div>
+        <div class="bg-notice" aria-live="polite">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Download runs in the background — you can switch apps
+        </div>
+      </div>
+
+      <!-- RECEIVE STEP 3: Done / Error -->
+      <div id="recv-s3" class="recv-step">
+        <div class="result-card" id="recv-result-card">
+          <div class="result-icon" id="recv-result-icon">✓</div>
+          <h2 class="result-title" id="recv-result-title">Download complete!</h2>
+          <p class="result-sub" id="recv-result-sub">Your file was received successfully.</p>
+          <button class="btn-primary" onclick="goHome()">Receive another file</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast notification -->
+  <div id="toast" class="toast" role="alert" aria-live="polite"></div>
+
+  <script>
+    // Load Socket.IO from the signaling server (works for both localhost and Render)
+    const _serverUrl = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+      ? location.origin
+      : 'https://porcupine-server.onrender.com';
+    const _s = document.createElement('script');
+    _s.src = _serverUrl + '/socket.io/socket.io.js';
+    _s.onload = () => { const _a = document.createElement('script'); _a.src = 'js/app.js'; document.body.appendChild(_a); };
+    document.body.appendChild(_s);
+  </script>
+</body>
+</html>
