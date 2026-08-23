@@ -508,6 +508,70 @@ body {
   .otp-row { gap: 6px; }
 }
 
+/* ── Save location checkbox ─────────────────────────────── */
+.save-location-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  margin-bottom: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color var(--trans), background var(--trans);
+  user-select: none;
+}
+.save-location-row:hover { border-color: var(--amber); background: var(--surface-2); }
+
+.save-checkbox-wrap {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+.save-checkbox-wrap input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.save-checkmark {
+  position: absolute;
+  inset: 0;
+  background: var(--surface-3);
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  transition: all var(--trans);
+}
+.save-checkbox-wrap input:checked ~ .save-checkmark {
+  background: var(--amber);
+  border-color: var(--amber);
+}
+.save-checkmark::after {
+  content: '';
+  position: absolute;
+  display: none;
+  left: 4px; top: 1px;
+  width: 5px; height: 9px;
+  border: 2px solid #000;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.save-checkbox-wrap input:checked ~ .save-checkmark::after { display: block; }
+
+.save-label-text {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-2);
+}
+.save-label-hint {
+  font-size: 0.78rem;
+  color: var(--text-3);
+  font-weight: 400;
+}
+.save-location-row:has(input:checked) .save-label-text { color: var(--amber); }
+
 /* ── Buttons ────────────────────────────────────────────── */
 .btn-primary {
   display: block;

@@ -16,10 +16,10 @@ const SIGNAL_SERVER = (window.location.hostname === 'localhost' || window.locati
   : RENDER_SERVER_URL;        // GitHub Pages — point to Render
 
 /* ── Config ───────────────────────────────────────────────────────────── */
-const CHUNK_SIZE = 64 * 1024;          // 64 KB per chunk
-const BUFFER_HIGH = 16 * 1024 * 1024;  // Pause sending above 16 MB buffered
-const BUFFER_LOW  = 4  * 1024 * 1024;  // Resume sending below 4 MB buffered
-const CODE_TTL    = 10 * 60;           // 10 minutes in seconds
+const CHUNK_SIZE  = 256 * 1024;         // 256 KB — sweet spot for WebRTC throughput (was 64KB)
+const BUFFER_HIGH = 8   * 1024 * 1024;  // Pause when 8 MB buffered
+const BUFFER_LOW  = 1   * 1024 * 1024;  // Resume when back to 1 MB (event-driven)
+const CODE_TTL    = 10  * 60;           // 10 minutes in seconds
 
 const ICE_CONFIG = {
   iceServers: [
@@ -277,45 +277,37 @@ async function sendFile() {
   const file = selectedFile;
   if (!file || !dataChannel) return;
 
-  // Send metadata
-  const meta = JSON.stringify({ type: 'meta', name: file.name, size: file.size });
-  dataChannel.send(meta);
+  // Send metadata first
+  dataChannel.send(JSON.stringify({ type: 'meta', name: file.name, size: file.size }));
 
   let offset = 0;
+  let drainResolve = null;
+
+  // Event-driven flow control: fire when buffer drains below threshold
+  dataChannel.bufferedAmountLowThreshold = BUFFER_LOW;
+  dataChannel.onbufferedamountlow = () => {
+    if (drainResolve) { drainResolve(); drainResolve = null; }
+  };
 
   while (offset < file.size) {
-    // Backpressure: wait if buffer is high
-    if (dataChannel.bufferedAmount > BUFFER_HIGH) {
-      await waitForBuffer();
+    // Read chunk ahead of time while buffer may still be draining
+    const end = Math.min(offset + CHUNK_SIZE, file.size);
+    const buffer = await file.slice(offset, end).arrayBuffer();
+
+    // If buffer is full, wait for the drain event (not a poll loop)
+    if (dataChannel.bufferedAmount >= BUFFER_HIGH) {
+      await new Promise(resolve => { drainResolve = resolve; });
     }
 
-    const end = Math.min(offset + CHUNK_SIZE, file.size);
-    const slice = file.slice(offset, end);
-    const buffer = await slice.arrayBuffer();
     dataChannel.send(buffer);
     offset += buffer.byteLength;
-
     updateSendProgress(offset, file.size);
   }
 
-  // Send done signal
+  // Clear the handler before sending done
+  dataChannel.onbufferedamountlow = null;
   dataChannel.send(JSON.stringify({ type: 'done' }));
   onSendComplete();
-}
-
-function waitForBuffer() {
-  return new Promise(resolve => {
-    const check = () => {
-      if (!dataChannel || dataChannel.bufferedAmount <= BUFFER_LOW) {
-        resolve();
-      } else {
-        dataChannel.onbufferedamountlow = () => { dataChannel.onbufferedamountlow = null; resolve(); };
-        // Fallback poll
-        setTimeout(check, 100);
-      }
-    };
-    check();
-  });
 }
 
 function updateSendProgress(sent, total) {
@@ -411,6 +403,9 @@ function checkOtpComplete() {
   const val = getOtpValue();
   const btn = document.getElementById('btn-start-download');
   if (btn) btn.disabled = val.length < 6;
+  // Show save-location checkbox only if browser supports File System Access API
+  const row = document.getElementById('save-location-row');
+  if (row) row.style.display = (val.length === 6 && 'showSaveFilePicker' in window) ? 'flex' : 'none';
 }
 
 async function startReceive() {
@@ -419,18 +414,9 @@ async function startReceive() {
 
   setElById('otp-error', '');
 
-  // For Chrome: prompt file save location BEFORE connecting
-  // This must be inside a user gesture (this click handler)
-  try {
-    if ('showSaveFilePicker' in window) {
-      // We don't know the filename yet — will rename after metadata arrives
-      // Store the promise for later; pick after 'matched' with the real name
-      useStreamAPI = true;
-      // We'll call showSaveFilePicker after we get the filename
-    }
-  } catch (e) {
-    useStreamAPI = false;
-  }
+  // Only use File System Access API if user explicitly opted in
+  const chk = document.getElementById('chk-save-location');
+  useStreamAPI = !!(chk && chk.checked && 'showSaveFilePicker' in window);
 
   const sock = getSocket();
   sock.emit('join', { code });

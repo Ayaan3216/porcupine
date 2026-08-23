@@ -205,6 +205,13 @@
           <input class="otp-box" id="otp-5" maxlength="1" inputmode="text" autocomplete="off" aria-label="Code character 6" oninput="otpInput(this,5)" onkeydown="otpKeydown(this,5)" />
         </div>
         <p class="otp-error" id="otp-error" aria-live="assertive"></p>
+        <label class="save-location-row" id="save-location-row" style="display:none">
+          <span class="save-checkbox-wrap">
+            <input type="checkbox" id="chk-save-location" />
+            <span class="save-checkmark" aria-hidden="true"></span>
+          </span>
+          <span class="save-label-text">Choose save location <span class="save-label-hint">(default: Downloads)</span></span>
+        </label>
         <button class="btn-primary" id="btn-start-download" onclick="startReceive()" disabled>
           Start Download
         </button>
