@@ -16,9 +16,9 @@ const SIGNAL_SERVER = (window.location.hostname === 'localhost' || window.locati
   : RENDER_SERVER_URL;        // GitHub Pages — point to Render
 
 /* ── Config ───────────────────────────────────────────────────────────── */
-const CHUNK_SIZE  = 256 * 1024;         // 256 KB — sweet spot for WebRTC throughput (was 64KB)
-const BUFFER_HIGH = 8   * 1024 * 1024;  // Pause when 8 MB buffered
-const BUFFER_LOW  = 1   * 1024 * 1024;  // Resume when back to 1 MB (event-driven)
+const CHUNK_SIZE  = 64 * 1024;          // 64 KB (Maximum safe size for mobile WebRTC)
+const BUFFER_HIGH = 2 * 1024 * 1024;    // 2 MB (Prevent overloading phone memory)
+const BUFFER_LOW  = 512 * 1024;         // 512 KB
 const CODE_TTL    = 10  * 60;           // 10 minutes in seconds
 
 const ICE_CONFIG = {
