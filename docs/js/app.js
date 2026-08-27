@@ -377,11 +377,14 @@ function onSendComplete() {
   showSendStep(4);
   setElById('send-result-icon', '✓');
   setElById('send-result-title', 'Transfer complete!');
-  setElById('send-result-sub', `${selectedFile.name} was delivered successfully.`);
+  setElById('send-result-sub', `${selectedFile.name} was delivered successfully. Returning home...`);
   showToast('🦔 File sent!');
 
   // Notify via Service Worker if available
   notifyCompletion('Send complete', `${selectedFile.name} was delivered.`);
+  
+  // Auto-return to home after 4 seconds
+  setTimeout(goHome, 4000);
 }
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -632,9 +635,12 @@ async function finalizeReceive() {
   showRecvStep(3);
   setElById('recv-result-icon', '✓');
   setElById('recv-result-title', 'Download complete!');
-  setElById('recv-result-sub', `${receiveFileName} received successfully.`);
+  setElById('recv-result-sub', `${receiveFileName} received successfully. Returning home...`);
   showToast('🦔 File received!');
   notifyCompletion('Download complete', `${receiveFileName} saved.`);
+  
+  // Auto-return to home after 4 seconds
+  setTimeout(goHome, 4000);
 }
 
 /* ══════════════════════════════════════════════════════════════════════
