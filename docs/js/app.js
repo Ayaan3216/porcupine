@@ -293,6 +293,15 @@ async function sendFile() {
   let offset = 0;
   let drainResolve = null;
 
+  // Dynamically adapt to older phones (like Oppo F11 Pro) that have strict message size limits
+  let activeChunkSize = CHUNK_SIZE;
+  if (peerConnection.sctp && peerConnection.sctp.maxMessageSize) {
+    const max = peerConnection.sctp.maxMessageSize;
+    if (max > 0 && max < activeChunkSize) {
+      activeChunkSize = max; // Throttle down to exactly what the phone supports (e.g. 16KB)
+    }
+  }
+
   // Event-driven flow control: fire when buffer drains below threshold
   dataChannel.bufferedAmountLowThreshold = BUFFER_LOW;
   dataChannel.onbufferedamountlow = () => {
@@ -300,16 +309,31 @@ async function sendFile() {
   };
 
   while (offset < file.size) {
-    // Read chunk ahead of time while buffer may still be draining
-    const end = Math.min(offset + CHUNK_SIZE, file.size);
+    const end = Math.min(offset + activeChunkSize, file.size);
     const buffer = await file.slice(offset, end).arrayBuffer();
 
-    // If buffer is full, wait for the drain event (not a poll loop)
+    // If buffer is full, wait for the drain event
     if (dataChannel.bufferedAmount >= BUFFER_HIGH) {
-      await new Promise(resolve => { drainResolve = resolve; });
+      await new Promise(resolve => {
+        drainResolve = resolve;
+        // Safety fallback for older Androids that might not fire onbufferedamountlow
+        const safetyPoll = setInterval(() => {
+          if (!dataChannel || dataChannel.bufferedAmount <= BUFFER_LOW) {
+            clearInterval(safetyPoll);
+            if (drainResolve) { drainResolve(); drainResolve = null; }
+          }
+        }, 100);
+      });
     }
 
-    dataChannel.send(buffer);
+    try {
+      dataChannel.send(buffer);
+    } catch (err) {
+      console.error('[send] chunk failed', err);
+      showTransferError('send', 'Data channel closed abruptly by the device limit.');
+      return;
+    }
+    
     offset += buffer.byteLength;
     updateSendProgress(offset, file.size);
   }
